@@ -1,5 +1,8 @@
 package br.com.ccroccia.domain;
 
+import annotation.Table;
+
+@Table(tableName = "Cliente")
 public class Client {
 
 	private Long id;

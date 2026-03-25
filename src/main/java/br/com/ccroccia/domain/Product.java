@@ -1,5 +1,8 @@
 package br.com.ccroccia.domain;
 
+import annotation.Table;
+
+@Table(tableName = "Product")
 public class Product {
 
 	private Integer id;
