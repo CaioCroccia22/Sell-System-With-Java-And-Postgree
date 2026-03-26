@@ -12,7 +12,7 @@ import java.util.Collection;
 public interface IGenericDAO <T extends Persistent, E extends Serializable> {
 
 
-    public Integer register(T entity) throws KeyTypeNotFoundException;
+    public Boolean register(T entity) throws KeyTypeNotFoundException, Exception;
 
 
     public Integer delete(E value);

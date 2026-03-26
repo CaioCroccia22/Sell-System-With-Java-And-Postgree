@@ -1,17 +1,23 @@
 package br.com.ccroccia.domain;
 
-import annotation.Column;
-import annotation.Table;
+
+import annotation.*;
+
+import br.com.ccroccia.dao.Persistent;
 
 @Table(tableName = "Cliente")
-public class Client {
+public class Client implements Persistent{
 
+	
 	@Column(columnName = "cd_client", method = "setId")
 	private Long id;
+	@KeyType("getCpf")
 	@Column(columnName = "cd_cpf", method = "setCpf")
 	private Long cpf;
 	@Column(columnName = "nm_client", method = "setName")
 	private String name;
+	@Column(columnName = "nr_age", method = "setAge")
+	private String age;
 	@Column(columnName = "nr_phone", method = "setPhone")
 	private Long phone;
 	@Column(columnName = "ds_address", method = "setAddress")
@@ -38,6 +44,14 @@ public class Client {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
 	}
 
 	public Long getPhone() {

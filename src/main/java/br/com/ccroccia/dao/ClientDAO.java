@@ -1,5 +1,6 @@
 package br.com.ccroccia.dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,13 +8,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ccroccia.dao.generics.GenericDAO;
+import br.com.ccroccia.dao.generics.IGenericDAO;
 import br.com.ccroccia.domain.Client;
 import br.com.ccrocia.dao.generic.jdbc.ConnectionFactory;
 
-public class ClientDAO implements IClientDao {
+public class ClientDAO extends GenericDAO<Client, Long> implements IGenericDAO<Client,Long> {
 
 	@Override
-	public Integer save(Client client) throws Exception {
+	protected String getQueryInsert() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT INTO CLIENTE ");
+		sb.append("(ID, NOME, CPF, TEL, ENDERECO, NUMERO");
+		sb.append("VALUES (nextval('sq_cliente'), ?,?, ?,?,?,?,?");
+		return sb.toString();
+	}
+	
+	
+	
+	
+	@Override
+	public Integer Register(Client client) throws Exception {
 		Connection connection = null;
 		PreparedStatement stm = null;
 		try {
