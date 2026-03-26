@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
-	public String ColumnName();
+	public String columnName();
 	
-	public String Method();
+	public String method();
 }

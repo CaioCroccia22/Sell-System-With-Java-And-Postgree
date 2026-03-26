@@ -3,7 +3,7 @@ package br.com.ccroccia.dao;
 /***
  * 
  * 
- * This class represents all entitys applications that will be save in database
+ * This class represents all entity applications that will be save in database
  */
 
 public interface Persistent {

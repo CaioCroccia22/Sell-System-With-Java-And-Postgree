@@ -1,12 +1,16 @@
 package br.com.ccroccia.domain;
 
+import annotation.Column;
 import annotation.Table;
 
 @Table(tableName = "Product")
 public class Product {
 
+	@Column(columnName = "cd_produto", method = "setId")
 	private Integer id;
+	@Column(columnName = "ds_produto", method = "setDescription")
 	private String description;
+	@Column(columnName = "qtd_produto", method = "setQuantity")
 	private Integer quantity;
 
 

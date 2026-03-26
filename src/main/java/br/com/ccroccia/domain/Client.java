@@ -1,17 +1,26 @@
 package br.com.ccroccia.domain;
 
+import annotation.Column;
 import annotation.Table;
 
 @Table(tableName = "Cliente")
 public class Client {
 
+	@Column(columnName = "cd_client", method = "setId")
 	private Long id;
+	@Column(columnName = "cd_cpf", method = "setCpf")
 	private Long cpf;
+	@Column(columnName = "nm_client", method = "setName")
 	private String name;
+	@Column(columnName = "nr_phone", method = "setPhone")
 	private Long phone;
+	@Column(columnName = "ds_address", method = "setAddress")
 	private String address;
+	@Column(columnName = "nr_adress_number", method = "setNumber")
 	private Integer number;
+	@Column(columnName = "ds_city", method = "setCity")
 	private String city;
+	@Column(columnName = "ds_state", method = "setState")
 	private String state;
 
 
