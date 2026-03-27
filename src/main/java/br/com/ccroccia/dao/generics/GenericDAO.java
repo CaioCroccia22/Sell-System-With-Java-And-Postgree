@@ -6,8 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -16,16 +18,9 @@ import br.com.ccroccia.dao.Persistent;
 import br.com.ccroccia.exceptions.KeyTypeNotFoundException;
 import br.com.ccrocia.dao.generic.jdbc.ConnectionFactory;
 
-/**
- * @author rodrigo.pires
- *
- * Generic class that implements the generic interface with CRUD methods
- */
 public abstract class GenericDAO<T extends Persistent, E extends Serializable> implements IGenericDAO<T,E> {
 
     public abstract Class<T> getTypeClass();
-    
-    public abstract void updateData(T entity, T existEntity);
     
     protected abstract String getQueryInsert();
     
@@ -33,18 +28,19 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     
     protected abstract String getQueryUpdate();
     
-    protected abstract void setParametersInsert(PreparedStatement stmInsert, E value) throws SQLException;
+    protected abstract void setParametersInsert(PreparedStatement stmInsert, T entity) throws SQLException;
     
     protected abstract void setParametersDelete(PreparedStatement stmDelete, E value) throws SQLException ;
     
     protected abstract void setParametersUpdate(PreparedStatement stmUpdate, E value) throws SQLException;
     
-    protected abstract void setParametersSelect(PreparedStatement stmUpdate, T entity);
+    protected abstract void setParametersSelect(PreparedStatement stmUpdate, E value) throws SQLException;
     
     public GenericDAO() {
     	
     }
-    
+  
+    /// =============REGISTER =================
     @Override
     public Boolean register(T entity) throws KeyTypeNotFoundException, Exception {
     	Connection connection = null;
@@ -52,6 +48,7 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     	try {
     		connection = getConnection();
     		stm        = connection.prepareStatement(getQueryInsert(), Statement.RETURN_GENERATED_KEYS);
+    		setParametersInsert(stm, entity);
     		if(stm.executeUpdate() > 0) {
     			try(ResultSet rs = stm.getGeneratedKeys()){
     				if(rs.next()) {
@@ -68,7 +65,8 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     	}
 		return false;
     }
-    
+ 
+    // ================== SELECT =======================================
     public T find(E value) throws Exception {
        	Connection connection = null;
     	PreparedStatement stm = null;
@@ -76,10 +74,11 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     		connection = getConnection();
     		stm		   = connection.prepareStatement("SELECT * FROM " 
     		+ getTableName() + " WHERE " + getColumnName().columnName() + " = ? ");
+    		setParametersSelect(stm, value);
     		ResultSet rs = stm.executeQuery();
     		if(rs.next()) {
     			T entity = getTypeClass().getConstructor().newInstance();
-    			Field[] fields = entity.getClass().getFields();
+    			Field[] fields = entity.getClass().getDeclaredFields();
     			for(Field f:fields) {
     				Column column = f.getDeclaredAnnotation(Column.class);
     				String columnName = column.columnName();
@@ -90,14 +89,13 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     					// represents method name and type parameters
     					Method method = entity.getClass().getMethod(setMethod, type);
     					setValueByType(entity, method, type, rs, columnName);
-    					return entity;
     				} catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-    					throw new Exception("ERRO CONSULTANDO OBJETO ", e);
-	                } catch (KeyTypeNotFoundException e) {
-	                	throw new Exception("ERRO CONSULTANDO OBJETO ", e);
-					}
+    			        throw new Exception("ERRO CONSULTANDO OBJETO ", e);
+    			    }
+    				
     				
     			}
+    			return entity;
     		}
     	} catch(Exception e) {
     		throw new Exception("Erro ao se conectar com o banco ", e);
@@ -107,7 +105,7 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
 		return null;
     	
     }
-    
+ //=================== DELETE =========================================================   
     public Boolean delete(E value) throws Exception {
     	Connection connection = null;
     	PreparedStatement stm = null;
@@ -127,7 +125,7 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
 		}
     }
     
-    
+  // ================= UPDATE ========================================================== 
     public Boolean update(E value) throws Exception {
     	Connection connection = null;
     	PreparedStatement stm = null;
@@ -147,7 +145,36 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
 		}
     }
     
+  // ========================== SELECT ALL =============================================
     
+    
+    public List<T> findAll() throws Exception {
+       	Connection connection 	= null;
+    	PreparedStatement stm	= null;
+    	List<T> list 			= new ArrayList<T>();
+    	try {
+    		connection = getConnection();
+    		stm		   = connection.prepareStatement("SELECT * FROM " + getTableName());
+    		ResultSet rs = stm.executeQuery();
+    		while(rs.next()) {
+    			T entity = getTypeClass().getConstructor().newInstance();
+    			list.add(entity);
+    			
+    		}
+    		return list;
+    	} catch(Exception e) {
+    		throw new Exception("Erro ao se conectar com o banco ", e);
+    	} finally {
+			closeConnection(connection, stm, null);
+		}
+    }
+    
+    
+    
+    
+    
+    
+  /// ====================== OTHER METHODS   ===================================================
     private void setValueByType(T entity, Method method, Class<?> fieldClass, ResultSet rs, String fieldName)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SQLException, Exception {
 
@@ -177,10 +204,10 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     //Get the column that has annotation of pk
 	private Column getColumnName() {
 		Class<T> entity = getTypeClass();
-		Field[] fields = entity.getFields();
+		Field[] fields = entity.getDeclaredFields();
 		for(Field f: fields) {
 			if(f.getAnnotation(KeyType.class) != null) {
-				Column column = entity.getClass().getAnnotation(Column.class);	
+				Column column = f.getAnnotation(Column.class);	
 				return column;
 			}
 		}
@@ -189,7 +216,7 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
 
 	private String getTableName() {
 		Class<T> entity = getTypeClass();
-		Table table = entity.getClass().getAnnotation(Table.class);
+		Table table = entity.getAnnotation(Table.class);
 		return table.tableName();
 	}
 
