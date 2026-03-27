@@ -16,84 +16,104 @@ public class ClientTest {
 	@Test
 	public void saveTest() throws Exception {
 		clientDAO = new ClientDAO();
-		
-		Client Client = new Client();
-		Client.setCpf(121212121L);
-		Client.setName("Caio Croccia");
-		Integer countCad = clientDAO.save(Client);
-		Assertions.assertTrue(countCad == 1);
-		
-		Client ClientBD = clientDAO.findByCPF(121212121L);
-		Assertions.assertNotNull(ClientBD);
-		Assertions.assertEquals(Client.getCpf(), ClientBD.getCpf());
-		Assertions.assertEquals(Client.getName(), ClientBD.getName());
-		
-		Integer countDel = clientDAO.delete(Client.getCpf());
-		Assertions.assertTrue(countDel == 1);
+
+		Client client = new Client();
+		client.setCpf(121212121L);
+		client.setName("Caio Croccia");
+		client.setAge("25");
+		client.setPhone(11999999999L);
+		client.setAddress("Rua Teste");
+		client.setNumber(100);
+		client.setCity("São Paulo");
+		client.setState("SP");
+		Boolean registered = clientDAO.register(client);
+		Assertions.assertTrue(registered);
+
+		Client clientBD = clientDAO.find(121212121L);
+		Assertions.assertNotNull(clientBD);
+		Assertions.assertEquals(client.getCpf(), clientBD.getCpf());
+		Assertions.assertEquals(client.getName(), clientBD.getName());
+
+		Boolean deleted = clientDAO.delete(client.getCpf());
+		Assertions.assertTrue(deleted);
 	}
 	
 	@Test
 	public void buscarTest() throws Exception {
 		clientDAO = new ClientDAO();
-		
-		Client Client = new Client();
-		Client.setCpf(323232323L);
-		Client.setName("Caio Croccia");
-		Integer countCad = clientDAO.save(Client);
-		Assertions.assertTrue(countCad == 1);
-		
-		Client ClientBD = clientDAO.findByCPF(323232323L);
-		Assertions.assertNotNull(ClientBD);
-		Assertions.assertEquals(Client.getCpf(), ClientBD.getCpf());
-		Assertions.assertEquals(Client.getName(), ClientBD.getName());
-		
-		Integer countDel = clientDAO.delete(323232323L);
-		Assertions.assertTrue(countDel == 1);
+
+		Client client = new Client();
+		client.setCpf(323232323L);
+		client.setName("Caio Croccia");
+		client.setAge("25");
+		client.setPhone(11999999999L);
+		client.setAddress("Rua Teste");
+		client.setNumber(200);
+		client.setCity("São Paulo");
+		client.setState("SP");
+		Boolean registered = clientDAO.register(client);
+		Assertions.assertTrue(registered);
+
+		Client clientBD = clientDAO.find(323232323L);
+		Assertions.assertNotNull(clientBD);
+		Assertions.assertEquals(client.getCpf(), clientBD.getCpf());
+		Assertions.assertEquals(client.getName(), clientBD.getName());
+
+		Boolean deleted = clientDAO.delete(323232323L);
+		Assertions.assertTrue(deleted);
 	}
 	
 	@Test
 	public void excluirTest() throws Exception {
 		clientDAO = new ClientDAO();
-		
-		Client Client = new Client();
-		Client.setCpf(323232323L);
-		Client.setName("Rodrigo Pires");
-		Integer countCad = clientDAO.save(Client);
-		Assertions.assertTrue(countCad == 1);
-		
-		Client ClientBD = clientDAO.findByCPF(323232323L);
-		Assertions.assertNotNull(ClientBD);
-		Assertions.assertEquals(Client.getCpf(), ClientBD.getCpf());
-		Assertions.assertEquals(Client.getName(), ClientBD.getName());
-		
-		Integer countDel = clientDAO.delete(323232323L);
-		Assertions.assertTrue(countDel == 1);
+
+		Client client = new Client();
+		client.setCpf(323232323L);
+		client.setName("Rodrigo Pires");
+		client.setAge("30");
+		client.setPhone(11888888888L);
+		client.setAddress("Rua Exemplo");
+		client.setNumber(300);
+		client.setCity("Rio de Janeiro");
+		client.setState("RJ");
+		Boolean registered = clientDAO.register(client);
+		Assertions.assertTrue(registered);
+
+		Client clientBD = clientDAO.find(323232323L);
+		Assertions.assertNotNull(clientBD);
+		Assertions.assertEquals(client.getCpf(), clientBD.getCpf());
+		Assertions.assertEquals(client.getName(), clientBD.getName());
+
+		Boolean deleted = clientDAO.delete(323232323L);
+		Assertions.assertTrue(deleted);
 	}
 	
 	
 	@Test
 	public void atualizarTest() throws Exception {
 		clientDAO = new ClientDAO();
-		
-		Client Client = new Client();
-		Client.setCpf(786755765L);
-		Client.setName("Caio Croccia");
-		Integer countCad = clientDAO.save(Client);
-		Assertions.assertTrue(countCad == 1);
-		
-		Client ClientBD = clientDAO.findByCPF(786755765L);
-		Assertions.assertNotNull(ClientBD);
-		Assertions.assertEquals(Client.getCpf(), ClientBD.getCpf());
-		Assertions.assertEquals(Client.getName(), ClientBD.getName());
-		
-		ClientBD.setCpf(7756555446L);
-		ClientBD.setName("Outro nome");
-		Integer countUpdate = clientDAO.update(ClientBD);
-		Assertions.assertTrue(countUpdate == 1);
-		
-		Client ClientBD1 = clientDAO.findByCPF(3232323L);
-		Assertions.assertNotNull(ClientBD1);
-		
-	
+
+		Client client = new Client();
+		client.setCpf(786755765L);
+		client.setName("Caio Croccia");
+		client.setAge("25");
+		client.setPhone(11999999999L);
+		client.setAddress("Rua Teste");
+		client.setNumber(400);
+		client.setCity("São Paulo");
+		client.setState("SP");
+		Boolean registered = clientDAO.register(client);
+		Assertions.assertTrue(registered);
+
+		Client clientBD = clientDAO.find(786755765L);
+		Assertions.assertNotNull(clientBD);
+		Assertions.assertEquals(client.getCpf(), clientBD.getCpf());
+		Assertions.assertEquals(client.getName(), clientBD.getName());
+
+		Boolean updated = clientDAO.update(clientBD.getCpf());
+		Assertions.assertTrue(updated);
+
+		Boolean deleted = clientDAO.delete(786755765L);
+		Assertions.assertTrue(deleted);
 	}
 }
