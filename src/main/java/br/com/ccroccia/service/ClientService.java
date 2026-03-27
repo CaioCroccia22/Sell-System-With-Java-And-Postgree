@@ -14,7 +14,7 @@ public class ClientService implements IClientService {
 
 	@Override
 	public boolean save(Client client) throws Exception {
-		clientDao.save(client);
+		clientDao.register(client);
 		return true;
 
 	}
